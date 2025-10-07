@@ -1,0 +1,44 @@
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const sequelize = require("./config/db");
+
+// Import models
+const Admin = require("./models/Admin");
+const Member = require("./models/Member");
+
+// Import routes
+const adminRoutes = require("./routes/adminRoutes");
+const memberRoutes = require("./routes/memberRoutes");
+const kinerjaRoutes = require("./routes/kinerjaMemberRoutes");
+
+// Load env
+dotenv.config();
+
+// Init app
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json()); // harus sebelum route
+
+// Routes
+app.use("/api/admins", adminRoutes);
+app.use("/api/members", memberRoutes);
+app.use("/api/kinerja-member", kinerjaRoutes);
+
+// Tes koneksi database
+sequelize
+    .sync({ alter: true }) // alter = update struktur tabel tanpa hapus data
+    .then(() => {
+        console.log("✅ Database connected & models synced");
+    })
+    .catch((err) => {
+        console.error("❌ DB sync error:", err);
+    });
+
+// Jalankan server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+});
