@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const rekomendasiController = require("../controllers/rekomendasiAiController");
+const rekomendasiController = require("../controllers/rekomendasiaiController");
 
 // Route CRUD
 router.get("/", rekomendasiController.getAllRekomendasi);
