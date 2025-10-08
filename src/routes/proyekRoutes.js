@@ -3,7 +3,7 @@ const router = express.Router();
 const proyekController = require("../controllers/proyekController");
 
 // Routes CRUD Member
-router.get("/", proyekController.getAllProyeks);
+router.get("/", proyekController.getAllProyek);
 router.get("/:id", proyekController.getProyekById);
 router.post("/", proyekController.createProyek);
 router.put("/:id", proyekController.updateProyek);

@@ -1,7 +1,6 @@
 // file: models/Survey.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-const Admin = require("./Admin");
 const Member = require("./Member");
 const Cabuy = require("./Cabuy");
 const Proyek = require("./Proyek");
@@ -52,16 +51,6 @@ const Survey = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
-    id_admin: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Admin,
-        key: "id_admin",
-      },
-      onUpdate: "CASCADE",
-      onDelete: "CASCADE",
-    },
   },
   {
     tableName: "survey",
@@ -72,10 +61,6 @@ const Survey = sequelize.define(
 //
 // 🔗 Relasi antar model
 //
-
-// Admin memiliki banyak Survey
-Admin.hasMany(Survey, { foreignKey: "id_admin" });
-Survey.belongsTo(Admin, { foreignKey: "id_admin" });
 
 // Member memiliki banyak Survey
 Member.hasMany(Survey, { foreignKey: "id_member" });

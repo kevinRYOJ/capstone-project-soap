@@ -1,9 +1,18 @@
-const Survey = require("../models/survey");
-const Admin = require("../models/Admin");
+// file: controllers/surveyController.js
+const Survey = require("../models/Survey");
 const Member = require("../models/Member");
 const Cabuy = require("../models/Cabuy");
 const Proyek = require("../models/Proyek");
 
+//
+// 📌 Helper untuk format tanggal ke ISO / MySQL (opsional)
+//
+const formatDateTime = (date) => {
+    if (!date) return null;
+    const d = new Date(date);
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+};
 
 //
 // 🔹 GET semua data survey
@@ -13,57 +22,56 @@ exports.getAllSurvey = async (req, res) => {
         const data = await Survey.findAll({
             include: [
                 {
-                    model: Admin,
-                    attributes: ["id_admin", "nama_admin"],
-                },
-                {
                     model: Member,
                     attributes: ["id_member", "nama_member", "level", "kontak"],
                 },
                 {
                     model: Cabuy,
-                    attributes: ["id_cabuy", "nama_cabuy"],
+                    attributes: ["id_cabuy", "nama_cabuy", "kontak", "email", "status"],
                 },
                 {
                     model: Proyek,
-                    attributes: ["id_proyek", "nama_proyek", "status_proyek"],
+                    attributes: ["id_proyek", "nama_proyek", "lokasi", "tipe", "harga", "status"],
                 },
             ],
             order: [["id_survey", "ASC"]],
         });
 
         res.status(200).json({
+            success: true,
             message: "Data survey berhasil diambil",
             data,
         });
     } catch (error) {
-        console.error("Error getAllSurvey:", error);
-        res.status(500).json({ message: "Gagal mengambil data survey" });
+        console.error("❌ Error getAllSurvey:", error);
+        res.status(500).json({ success: false, message: "Gagal mengambil data survey", error: error.message });
     }
 };
 
 //
-// 🔹 GET satu data survey berdasarkan id_survey
+// 🔹 GET satu data survey berdasarkan ID
 //
 exports.getSurveyById = async (req, res) => {
     try {
         const { id } = req.params;
+
         const data = await Survey.findByPk(id, {
             include: [
-
+                { model: Admin, attributes: ["id_admin", "nama_admin"] },
                 { model: Member, attributes: ["id_member", "nama_member"] },
                 { model: Cabuy, attributes: ["id_cabuy", "nama_cabuy"] },
                 { model: Proyek, attributes: ["id_proyek", "nama_proyek"] },
             ],
         });
 
-        if (!data)
-            return res.status(404).json({ message: "Survey tidak ditemukan" });
+        if (!data) {
+            return res.status(404).json({ success: false, message: "Survey tidak ditemukan" });
+        }
 
-        res.status(200).json(data);
+        res.status(200).json({ success: true, data });
     } catch (error) {
-        console.error("Error getSurveyById:", error);
-        res.status(500).json({ message: "Gagal mengambil data survey" });
+        console.error("❌ Error getSurveyById:", error);
+        res.status(500).json({ success: false, message: "Gagal mengambil data survey", error: error.message });
     }
 };
 
@@ -72,34 +80,35 @@ exports.getSurveyById = async (req, res) => {
 //
 exports.createSurvey = async (req, res) => {
     try {
-        const { id_cabuy, id_member, id_proyek, status_survey, tanggal_survey, id_admin } = req.body;
+        const { id_cabuy, id_member, id_proyek, status_survey, tanggal_survey } = req.body;
 
-        // Validasi foreign key
-        const admin = await Admin.findByPk(id_admin);
-        const member = await Member.findByPk(id_member);
-        const cabuy = await Cabuy.findByPk(id_cabuy);
-        const proyek = await Proyek.findByPk(id_proyek);
+        // 🔸 Validasi foreign key
+        const [cabuy, member, proyek] = await Promise.all([
+            Cabuy.findByPk(id_cabuy),
+            Member.findByPk(id_member),
+            Proyek.findByPk(id_proyek),
+        ]);
 
-        if (!admin || !member || !cabuy || !proyek) {
-            return res.status(400).json({ message: "Data relasi tidak valid" });
+        if (!cabuy || !member || !proyek) {
+            return res.status(400).json({ success: false, message: "Data relasi (Cabuy, Member, Proyek) tidak valid" });
         }
 
         const newSurvey = await Survey.create({
             id_cabuy,
             id_member,
             id_proyek,
-            status_survey,
-            tanggal_survey,
-            id_admin,
+            status_survey: status_survey || "Belum",
+            tanggal_survey: formatDateTime(tanggal_survey),
         });
 
         res.status(201).json({
+            success: true,
             message: "Data survey berhasil ditambahkan",
             data: newSurvey,
         });
     } catch (error) {
-        console.error("Error createSurvey:", error);
-        res.status(500).json({ message: "Gagal menambahkan data survey" });
+        console.error("❌ Error createSurvey:", error);
+        res.status(500).json({ success: false, message: "Gagal menambahkan data survey", error: error.message });
     }
 };
 
@@ -109,28 +118,29 @@ exports.createSurvey = async (req, res) => {
 exports.updateSurvey = async (req, res) => {
     try {
         const { id } = req.params;
-        const { id_cabuy, id_member, id_proyek, status_survey, tanggal_survey, id_admin } = req.body;
+        const { id_cabuy, id_member, id_proyek, status_survey, tanggal_survey } = req.body;
 
         const survey = await Survey.findByPk(id);
-        if (!survey)
-            return res.status(404).json({ message: "Data survey tidak ditemukan" });
+        if (!survey) {
+            return res.status(404).json({ success: false, message: "Data survey tidak ditemukan" });
+        }
 
         await survey.update({
-            id_cabuy,
-            id_member,
-            id_proyek,
-            status_survey,
-            tanggal_survey,
-            id_admin,
+            id_cabuy: id_cabuy ?? survey.id_cabuy,
+            id_member: id_member ?? survey.id_member,
+            id_proyek: id_proyek ?? survey.id_proyek,
+            status_survey: status_survey ?? survey.status_survey,
+            tanggal_survey: tanggal_survey ? formatDateTime(tanggal_survey) : survey.tanggal_survey,
         });
 
         res.status(200).json({
+            success: true,
             message: "Data survey berhasil diperbarui",
             data: survey,
         });
     } catch (error) {
-        console.error("Error updateSurvey:", error);
-        res.status(500).json({ message: "Gagal memperbarui data survey" });
+        console.error("❌ Error updateSurvey:", error);
+        res.status(500).json({ success: false, message: "Gagal memperbarui data survey", error: error.message });
     }
 };
 
@@ -142,15 +152,15 @@ exports.deleteSurvey = async (req, res) => {
         const { id } = req.params;
 
         const survey = await Survey.findByPk(id);
-        if (!survey)
-            return res.status(404).json({ message: "Data survey tidak ditemukan" });
+        if (!survey) {
+            return res.status(404).json({ success: false, message: "Data survey tidak ditemukan" });
+        }
 
         await survey.destroy();
 
-        res.status(200).json({ message: "Data survey berhasil dihapus" });
+        res.status(200).json({ success: true, message: "Data survey berhasil dihapus" });
     } catch (error) {
-        console.error("Error deleteSurvey:", error);
-        res.status(500).json({ message: "Gagal menghapus data survey" });
+        console.error("❌ Error deleteSurvey:", error);
+        res.status(500).json({ success: false, message: "Gagal menghapus data survey", error: error.message });
     }
 };
-

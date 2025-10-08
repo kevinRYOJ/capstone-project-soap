@@ -3,7 +3,7 @@ const router = express.Router();
 const surveyController = require("../controllers/surveyController");
 
 // Routes CRUD Member
-router.get("/", surveyController.getAllSurveys);
+router.get("/", surveyController.getAllSurvey);
 router.get("/:id", surveyController.getSurveyById);
 router.post("/", surveyController.createSurvey);
 router.put("/:id", surveyController.updateSurvey);
