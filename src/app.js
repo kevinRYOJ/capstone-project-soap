@@ -12,6 +12,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const memberRoutes = require("./routes/memberRoutes");
 const kinerjaRoutes = require("./routes/kinerjaMemberRoutes");
 const cabuyRoutes = require("./routes/cabuyRoutes");
+const surveyRoutes = require("./routes/surveyRoutes");
 
 // Load env
 dotenv.config();
@@ -28,6 +29,7 @@ app.use("/api/admins", adminRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/kinerja-member", kinerjaRoutes);
 app.use("/api/cabuy", cabuyRoutes);
+app.use("/api/survey", surveyRoutes);
 
 // Tes koneksi database
 sequelize
