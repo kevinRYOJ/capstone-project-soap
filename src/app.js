@@ -15,6 +15,7 @@ const cabuyRoutes = require("./routes/cabuyRoutes");
 const surveyRoutes = require("./routes/surveyRoutes");
 const proyekRoutes = require("./routes/proyekRoutes");
 const rekomendasiaiRoutes = require("./routes/rekomendasiaiRoutes");
+const crmRoutes = require("./routes/crmRoutes");
 
 // Load env
 dotenv.config();
@@ -34,6 +35,7 @@ app.use("/api/cabuy", cabuyRoutes);
 app.use("/api/survey", surveyRoutes);
 app.use("/api/proyek", proyekRoutes);
 app.use("/api/rekomendasiai", rekomendasiaiRoutes);
+app.use("/api/crm", crmRoutes);
 
 // Tes koneksi database
 sequelize
