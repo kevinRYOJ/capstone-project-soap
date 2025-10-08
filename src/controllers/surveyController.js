@@ -57,9 +57,10 @@ exports.getSurveyById = async (req, res) => {
 
         const data = await Survey.findByPk(id, {
             include: [
-                { model: Member, attributes: ["id_member", "nama_member", "level", "kontak"] },
-                { model: Cabuy, attributes: ["id_cabuy", "nama_cabuy", "kontak", "email", "status"] },
-                { model: Proyek, attributes: ["id_proyek", "nama_proyek", "lokasi", "tipe", "harga", "status"] },
+                { model: Admin, attributes: ["id_admin", "nama_admin"] },
+                { model: Member, attributes: ["id_member", "nama_member"] },
+                { model: Cabuy, attributes: ["id_cabuy", "nama_cabuy"] },
+                { model: Proyek, attributes: ["id_proyek", "nama_proyek"] },
             ],
         });
 
