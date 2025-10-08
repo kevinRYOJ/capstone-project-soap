@@ -1,4 +1,4 @@
-const Survey = require("../models/Survey");
+const Survey = require("../models/survey");
 const Admin = require("../models/Admin");
 const Member = require("../models/Member");
 const Cabuy = require("../models/Cabuy");
