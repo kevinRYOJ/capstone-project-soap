@@ -50,7 +50,7 @@ exports.getSurveyById = async (req, res) => {
         const { id } = req.params;
         const data = await Survey.findByPk(id, {
             include: [
-                { model: Admin, attributes: ["id_admin", "nama_admin"] },
+
                 { model: Member, attributes: ["id_member", "nama_member"] },
                 { model: Cabuy, attributes: ["id_cabuy", "nama_cabuy"] },
                 { model: Proyek, attributes: ["id_proyek", "nama_proyek"] },

@@ -13,6 +13,8 @@ const memberRoutes = require("./routes/memberRoutes");
 const kinerjaRoutes = require("./routes/kinerjaMemberRoutes");
 const cabuyRoutes = require("./routes/cabuyRoutes");
 const surveyRoutes = require("./routes/surveyRoutes");
+const rekomendasi_aiRoutes = require("./routes/rekomendasi_aiRoutes");
+
 
 // Load env
 dotenv.config();
@@ -30,6 +32,8 @@ app.use("/api/members", memberRoutes);
 app.use("/api/kinerja-member", kinerjaRoutes);
 app.use("/api/cabuy", cabuyRoutes);
 app.use("/api/survey", surveyRoutes);
+app.use("/api/rekomendasi_ai", rekomendasi_aiRoutes);
+
 
 // Tes koneksi database
 sequelize
