@@ -11,6 +11,7 @@ const Member = require("./models/Member");
 const adminRoutes = require("./routes/adminRoutes");
 const memberRoutes = require("./routes/memberRoutes");
 const kinerjaRoutes = require("./routes/kinerjaMemberRoutes");
+const cabuyRoutes = require("./routes/cabuyRoutes");
 
 // Load env
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(express.json()); // harus sebelum route
 app.use("/api/admins", adminRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/kinerja-member", kinerjaRoutes);
+app.use("/api/cabuy", cabuyRoutes);
 
 // Tes koneksi database
 sequelize
