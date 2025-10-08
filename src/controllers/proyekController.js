@@ -1,8 +1,6 @@
 // file: controllers/proyekController.js
 const Proyek = require("../models/Proyek");
-const Admin = require("../models/Admin");
 const Member = require("../models/Member");
-const Cabuy = require("../models/Cabuy");
 
 //
 // 📄 GET semua proyek
@@ -11,9 +9,7 @@ exports.getAllProyek = async (req, res) => {
     try {
         const data = await Proyek.findAll({
             include: [
-                { model: Admin, attributes: ["id_admin", "nama_admin"] },
                 { model: Member, attributes: ["id_member", "nama_member"] },
-                { model: Cabuy, attributes: ["id_cabuy", "nama_cabuy"] },
             ],
             order: [["id_proyek", "DESC"]],
         });
@@ -41,9 +37,7 @@ exports.getProyekById = async (req, res) => {
 
         const data = await Proyek.findByPk(id, {
             include: [
-                { model: Admin, attributes: ["id_admin", "nama_admin"] },
                 { model: Member, attributes: ["id_member", "nama_member"] },
-                { model: Cabuy, attributes: ["id_cabuy", "nama_cabuy"] },
             ],
         });
 
@@ -79,8 +73,6 @@ exports.createProyek = async (req, res) => {
             harga,
             status,
             id_member,
-            id_admin,
-            id_cabuy,
         } = req.body;
 
         const proyek = await Proyek.create({
@@ -90,8 +82,6 @@ exports.createProyek = async (req, res) => {
             harga,
             status,
             id_member,
-            id_admin,
-            id_cabuy,
         });
 
         res.status(201).json({
@@ -121,8 +111,6 @@ exports.updateProyek = async (req, res) => {
             harga,
             status,
             id_member,
-            id_admin,
-            id_cabuy,
         } = req.body;
 
         const proyek = await Proyek.findByPk(id);
@@ -140,8 +128,6 @@ exports.updateProyek = async (req, res) => {
             harga,
             status,
             id_member,
-            id_admin,
-            id_cabuy,
         });
 
         res.status(200).json({
