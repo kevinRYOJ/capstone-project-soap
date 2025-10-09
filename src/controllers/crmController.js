@@ -9,7 +9,7 @@ exports.getAllCrm = async (req, res) => {
         const data = await Crm.findAll({
             include: [
                 { model: Member, attributes: ["id_member", "nama_member", "level", "kontak", "id_admin"] },
-                { model: Cabuy, attributes: ["id_cabuy", "nama", "kontak", "email", "status"] },
+                { model: Cabuy, attributes: ["id_cabuy", "nama_cabuy", "kontak", "email", "status"] },
             ],
         });
         res.json(data);
