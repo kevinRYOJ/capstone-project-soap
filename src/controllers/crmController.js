@@ -1,5 +1,7 @@
 // file: controllers/crmController.js
-const { Crm, Member, Cabuy } = require("../models");
+const Crm = require("../models/Crm"); 
+const Cabuy = require("../models/Cabuy"); 
+const Member = require("../models/Member"); 
 
 // 🔹 GET semua data CRM (dengan relasi Member & Cabuy)
 exports.getAllCrm = async (req, res) => {
@@ -17,7 +19,7 @@ exports.getAllCrm = async (req, res) => {
 };
 
 // 🔹 GET CRM berdasarkan ID
-exports.getCrmyId = async (req, res) => {
+exports.getCrmById = async (req, res) => {
     try {
         const crm = await Crm.findByPk(req.params.id, {
             include: [Member, Cabuy],

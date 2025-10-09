@@ -50,11 +50,11 @@ const Crm = sequelize.define(
 //relasi antar model
 
 //relasi member ke crm
-Member.hasMany(CRM, { foreignKey: "id_member" });
-CRM.belongsTo(Member, { foreignKey: "id_member" });
+Member.hasMany(Crm, { foreignKey: "id_member" });
+Crm.belongsTo(Member, { foreignKey: "id_member" });
 
 //relasii cabuy ke crm
-Cabuy.hasMany(CRM, { foreignKey: "id_cabuy" });
-CRM.belongsTo(Cabuy, { foreignKey: "id_cabuy" });
+Cabuy.hasMany(Crm, { foreignKey: "id_cabuy" });
+Crm.belongsTo(Cabuy, { foreignKey: "id_cabuy" });
 
 module.exports = Crm;

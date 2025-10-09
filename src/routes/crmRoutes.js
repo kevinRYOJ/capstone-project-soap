@@ -5,7 +5,7 @@ const crmController = require("../controllers/crmController");
 
 // ✅ Routes untuk model CRM
 router.get("/", crmController.getAllCrm);
-router.get("/:id", crmController.getCrmId);
+router.get("/:id", crmController.getCrmById);
 router.post("/", crmController.createCrm);
 router.put("/:id", crmController.updateCrm);
 router.delete("/:id", crmController.deleteCrm);
