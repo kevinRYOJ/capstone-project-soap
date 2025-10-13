@@ -1,10 +1,10 @@
 const Admin = require("../models/Admin");
 
 // GET all admins
-exports.getAdmins = async (req, res) => {
+exports.getAdmin = async (req, res) => {
     try {
-        const admins = await Admin.findAll();
-        res.json(admins);
+        const admin = await Admin.findAll();
+        res.json(admin);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

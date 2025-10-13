@@ -4,16 +4,17 @@ const Admin = require("../models/Admin");
 // ✅ CREATE
 exports.createMember = async (req, res) => {
     try {
-        const { nama_member, level, kontak, id_admin } = req.body;
+        const { nama_member, jabatan, kontak, leader_id, id_admin } = req.body;
 
-        if (!nama_member || !level || !kontak) {
+        if (!nama_member || !jabatan || !kontak || !leader_id) {
             return res.status(400).json({ message: "Semua field wajib diisi!" });
         }
 
         const newMember = await Member.create({
             nama_member,
-            level,
+            jabatan,
             kontak,
+            leader_id,
             id_admin,
         });
 
@@ -28,9 +29,9 @@ exports.createMember = async (req, res) => {
 };
 
 // ✅ READ (Semua Member)
-exports.getAllMembers = async (req, res) => {
+exports.getAllMember = async (req, res) => {
     try {
-        const members = await Member.findAll({
+        const member = await Member.findAll({
             include: [
                 {
                     model: Admin,
@@ -38,7 +39,7 @@ exports.getAllMembers = async (req, res) => {
                 },
             ],
         });
-        res.status(200).json(members);
+        res.status(200).json(member);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Gagal mengambil data member", error });
@@ -66,12 +67,12 @@ exports.getMemberById = async (req, res) => {
 exports.updateMember = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nama_member, level, kontak, id_admin } = req.body;
+        const { nama_member, jabatan, kontak, leader_id, id_admin } = req.body;
 
         const member = await Member.findByPk(id);
         if (!member) return res.status(404).json({ message: "Member tidak ditemukan" });
 
-        await member.update({ nama_member, level, kontak, id_admin });
+        await member.update({ nama_member, jabatan, kontak, leader_id, id_admin });
         res.status(200).json({ message: "Data member berhasil diperbarui", data: member });
     } catch (error) {
         console.error(error);

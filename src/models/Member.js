@@ -14,12 +14,17 @@ const Member = sequelize.define(
             type: DataTypes.TEXT,
             allowNull: false,
         },
-        level: {
-            type: DataTypes.ENUM("Aktif", "Nonaktif"),
-            defaultValue: ("Aktif"),
-        },
+        jabatan: {
+            type: DataTypes.ENUM("Member", "leader","Senior leader"),
+            defaultValue: ("Member"),
+            allowNull: false,
+        },  
         kontak: {
             type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        leader_id: {
+            type: DataTypes.INTEGER,
             allowNull: true,
         },
         id_admin: {

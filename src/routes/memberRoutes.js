@@ -3,7 +3,7 @@ const router = express.Router();
 const memberController = require("../controllers/memberController");
 
 // Routes CRUD Member
-router.get("/", memberController.getAllMembers);
+router.get("/", memberController.getAllMember);
 router.get("/:id", memberController.getMemberById);
 router.post("/", memberController.createMember);
 router.put("/:id", memberController.updateMember);
