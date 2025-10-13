@@ -15,10 +15,10 @@ const Member = sequelize.define(
             allowNull: false,
         },
         jabatan: {
-            type: DataTypes.ENUM("Member", "leader","Senior leader"),
-            defaultValue: ("Member"),
+            type: DataTypes.ENUM("Member", "Leader", "Senior leader"),
+            defaultValue: "Member",
             allowNull: false,
-        },  
+        },
         kontak: {
             type: DataTypes.TEXT,
             allowNull: true,
@@ -26,6 +26,12 @@ const Member = sequelize.define(
         leader_id: {
             type: DataTypes.INTEGER,
             allowNull: true,
+            references: {
+                model: "member", // ⚡ gunakan nama tabel string, bukan variabel model
+                key: "id_member",
+            },
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL", // lebih aman supaya jika leader dihapus, anak tidak ikut terhapus
         },
         id_admin: {
             type: DataTypes.INTEGER,
@@ -40,12 +46,16 @@ const Member = sequelize.define(
     },
     {
         tableName: "member",
-        timestamps: false, // sesuai diagram (nggak ada created_at / updated_at)
+        timestamps: false,
     }
 );
 
 // Relasi: Admin memiliki banyak Member
 Admin.hasMany(Member, { foreignKey: "id_admin" });
 Member.belongsTo(Admin, { foreignKey: "id_admin" });
+
+// 🧩 Self-referencing relationship
+Member.hasMany(Member, { as: "Anggota", foreignKey: "leader_id" });
+Member.belongsTo(Member, { as: "Leader", foreignKey: "leader_id" });
 
 module.exports = Member;
