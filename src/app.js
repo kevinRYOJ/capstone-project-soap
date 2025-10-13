@@ -28,8 +28,8 @@ app.use(cors());
 app.use(express.json()); // harus sebelum route
 
 // Routes
-app.use("/api/admins", adminRoutes);
-app.use("/api/members", memberRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/member", memberRoutes);
 app.use("/api/kinerja-member", kinerjaRoutes);
 app.use("/api/cabuy", cabuyRoutes);
 app.use("/api/survey", surveyRoutes);

@@ -40,8 +40,8 @@ const Rekomendasi_ai = sequelize.define(
     },
   },
   {
-    tableName: "rekomendasi_ai", // ganti sesuai nama tabel di DB kamu
-    timestamps: false, // tidak pakai created_at / updated_at
+    tableName: "rekomendasi_ai", 
+    timestamps: false, 
   }
 );
 
@@ -49,11 +49,11 @@ const Rekomendasi_ai = sequelize.define(
 // 🔗 Relasi antar model
 //
 
-// Satu Cabuy bisa punya banyak rekomendasi
+
 Cabuy.hasMany(Rekomendasi_ai, { foreignKey: "id_cabuy" });
 Rekomendasi_ai.belongsTo(Cabuy, { foreignKey: "id_cabuy" });
 
-// Satu Proyek bisa punya banyak rekomendasi AI
+
 Proyek.hasMany(Rekomendasi_ai, { foreignKey: "id_proyek" });
 Rekomendasi_ai.belongsTo(Proyek, { foreignKey: "id_proyek" });
 
