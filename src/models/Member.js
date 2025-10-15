@@ -11,7 +11,7 @@ const Member = sequelize.define(
             primaryKey: true,
         },
         nama_member: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING(255),
             allowNull: false,
         },
         jabatan: {
