@@ -1,5 +1,6 @@
 // controllers/CabuyController.js
 const Cabuy = require("../models/Cabuy");
+const Member = require("../models/Member");
 
 // ✅ GET semua Cabuy
 exports.getCabuys = async (req, res) => {
@@ -15,18 +16,19 @@ exports.getCabuys = async (req, res) => {
 // ✅ POST buat Cabuy baru
 exports.createCabuy = async (req, res) => {
     try {
-        const { nama_cabuy, kontak, email, status } = req.body;
+        const { nama_cabuy, kontak, status, tanggal_follow_up, tanggal_masuk } = req.body;
 
         // 🛡️ Validasi input
-        if (!nama_cabuy || !kontak || !email || !status) {
+        if (!nama_cabuy || !kontak || !status || !tanggal_follow_up || !tanggal_masuk) {
             return res.status(400).json({ error: "Semua field wajib diisi" });
         }
 
         const newCabuy = await Cabuy.create({
             nama_cabuy,
             kontak,
-            email,
             status,
+            tanggal_follow_up,
+            tanggal_masuk,
         });
 
         res.status(201).json({
