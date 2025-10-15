@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const Member = require("./Member");
 
 const Cabuy = sequelize.define(
     "Cabuy",
@@ -14,16 +15,31 @@ const Cabuy = sequelize.define(
             allowNull: false,
         },
         kontak: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: false,
-        },
-        email: {
-            type: DataTypes.TEXT,
-            allowNull: true,
         },
         status: {
-            type: DataTypes.TEXT,
+            type: DataTypes.ENUM("Baru", "Follow Up", "Closing", "Lost"),
+            defaultValue: "Baru",
             allowNull: false,
+        },
+        tanggal_follow_up: {
+            type: DataTypes.DATE,
+            allowNull: false,
+        },
+        tanggal_masuk: {
+            type: DataTypes.DATE,
+            allowNull: false,
+        },
+        id_member: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: Member,
+                key: "id_member",
+            },
+            onUpdate: "CASCADE",
+            onDelete: "CASCADE",
         },
     },
     {
@@ -31,4 +47,9 @@ const Cabuy = sequelize.define(
         timestamps: false, // sesuai diagram (nggak ada created_at / updated_at)
     }
 );
+
+Member.hasMany(Cabuy, { foreignKey: "id_member" });
+Cabuy.belongsTo(Member, { foreignKey: "id_member" });
+
+
 module.exports = Cabuy;
