@@ -11,7 +11,7 @@ const Admin = sequelize.define(
             primaryKey: true,
         },
         nama_admin: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING(255),
             allowNull: false,
         },
         email: {
