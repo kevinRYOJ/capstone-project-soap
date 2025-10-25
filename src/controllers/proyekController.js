@@ -11,7 +11,6 @@ exports.getAllProyek = async (req, res) => {
         const data = await Proyek.findAll({
             include: [
                 { model: Member, attributes: ["id_member", "nama_member"] },
-                { model: Rumah, attributes: ["id_rumah", "tipe_rumah", "jumlah_kamar", "status_rumah"] },
             ],
             order: [["id_proyek", "DESC"]],
         });
@@ -40,7 +39,7 @@ exports.getProyekById = async (req, res) => {
         const data = await Proyek.findByPk(id, {
             include: [
                 { model: Member, attributes: ["id_member", "nama_member"] },
-                { model: Rumah, attributes: ["id_rumah", "tipe_rumah", "jumlah_kamar", "status_rumah"] },
+
             ],
         });
 
@@ -76,7 +75,6 @@ exports.createProyek = async (req, res) => {
             harga,
             status,
             id_member,
-            id_rumah,
         } = req.body;
 
         const proyek = await Proyek.create({
@@ -86,7 +84,6 @@ exports.createProyek = async (req, res) => {
             harga,
             status,
             id_member,
-            id_rumah,
         });
 
         res.status(201).json({
@@ -116,7 +113,7 @@ exports.updateProyek = async (req, res) => {
             harga,
             status,
             id_member,
-            id_rumah,
+
         } = req.body;
 
         const proyek = await Proyek.findByPk(id);
@@ -134,7 +131,7 @@ exports.updateProyek = async (req, res) => {
             harga,
             status,
             id_member,
-            id_rumah,
+
         });
 
         res.status(200).json({

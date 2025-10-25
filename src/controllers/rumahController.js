@@ -75,7 +75,7 @@ exports.createRumah = async (req, res) => {
             id_proyek,
         } = req.body;
 
-        const Rumah = await Rumah.create({
+        const rumah = await Rumah.create({
             alamat,
             tipe_rumah,
             luas_bangunan,
