@@ -14,6 +14,18 @@ const Member = sequelize.define(
             type: DataTypes.STRING(255),
             allowNull: false,
         },
+        email: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+            unique: true,
+            validate: {
+                isEmail: true,
+            },
+        },
+        password: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
+        },
         jabatan: {
             type: DataTypes.ENUM("Member", "Leader", "Senior leader"),
             defaultValue: "Member",
@@ -25,7 +37,7 @@ const Member = sequelize.define(
         },
         leader_id: {
             type: DataTypes.INTEGER,
-            allowNull: true,
+            allowNull: false,
             references: {
                 model: "member", // ⚡ gunakan nama tabel string, bukan variabel model
                 key: "id_member",
