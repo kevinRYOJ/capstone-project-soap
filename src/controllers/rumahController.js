@@ -1,6 +1,6 @@
 // file: controllers/rumahController.js
 const Rumah = require("../models/Rumah");
-const Properti = require("../models/Properti");
+const Proyek = require("../models/Proyek");
 
 //
 // 📄 GET semua rumah
@@ -9,7 +9,7 @@ exports.getAllRumah = async (req, res) => {
     try {
         const data = await Rumah.findAll({
             include: [
-                { model: Properti, attributes: ["id_properti", "nama_properti", "deskripsi"] },
+                { model: Proyek, attributes: ["id_proyek", "nama_proyek"] },
             ],
             order: [["id_rumah", "DESC"]],
         });
@@ -37,7 +37,7 @@ exports.getRumahById = async (req, res) => {
 
         const data = await Rumah.findByPk(id, {
             include: [
-                { model: Properti, attributes: ["id_properti", "nama_properti", "deskripsi"] },
+                { model: Proyek, attributes: ["id_proyek", "nama_proyek"] },
             ],
         });
 
@@ -72,7 +72,7 @@ exports.createRumah = async (req, res) => {
             luas_bangunan,
             jumlah_kamar,
             status_rumah,
-            id_properti,
+            id_proyek,
         } = req.body;
 
         const Rumah = await Rumah.create({
@@ -81,7 +81,7 @@ exports.createRumah = async (req, res) => {
             luas_bangunan,
             jumlah_kamar,
             status_rumah,
-            id_properti,
+            id_proyek,
         });
 
         res.status(201).json({
@@ -110,7 +110,7 @@ exports.updateRumah = async (req, res) => {
             luas_bangunan,
             jumlah_kamar,
             status_rumah,
-            id_properti,
+            id_proyek,
         } = req.body;
 
         const rumah = await Rumah.findByPk(id);
@@ -127,7 +127,7 @@ exports.updateRumah = async (req, res) => {
             luas_bangunan,
             jumlah_kamar,
             status_rumah,
-            id_properti,
+            id_proyek,
         });
 
         res.status(200).json({

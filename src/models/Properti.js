@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const Rumah = require("./Rumah");
 
 const Properti = sequelize.define("Properti", {
     id_properti: {
@@ -15,6 +16,16 @@ const Properti = sequelize.define("Properti", {
         type: DataTypes.TEXT,
         allowNull: false,
     },
+    id_rumah: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: Rumah,
+            key: "id_rumah",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+    },
 
 }, {
     tableName: "properti",
@@ -22,5 +33,7 @@ const Properti = sequelize.define("Properti", {
 }
 );
 
+Rumah.hasMany(Properti, { foreignKey: "id_rumah" });
+Properti.belongsTo(Rumah, { foreignKey: "id_rumah" });
 
 module.exports = Properti;

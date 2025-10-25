@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-const Properti = require("./Properti");
+const Proyek = require("./Proyek");
 
 const Rumah = sequelize.define("Rumah", {
     id_rumah: {
@@ -28,12 +28,12 @@ const Rumah = sequelize.define("Rumah", {
         type: DataTypes.ENUM("tersedia", "terjual"),
         allowNull: false,
     },
-    id_properti: {
+    id_proyek: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
-            model: Properti,
-            key: "id_properti",
+            model: Proyek,
+            key: "id_proyek",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
@@ -46,7 +46,7 @@ const Rumah = sequelize.define("Rumah", {
 );
 
 // Relasi: Admin memiliki banyak Member
-Properti.hasMany(Rumah, { foreignKey: "id_properti" });
-Rumah.belongsTo(Properti, { foreignKey: "id_properti" });
+Proyek.hasMany(Rumah, { foreignKey: "id_proyek" });
+Rumah.belongsTo(Proyek, { foreignKey: "id_proyek" });
 
 module.exports = Rumah;
