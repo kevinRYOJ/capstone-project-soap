@@ -32,6 +32,10 @@ const Crm = sequelize.define(
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         },
+        catatan: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
         interaksi_terakhir: {
             type: DataTypes.DATE,
             allowNull: true,
