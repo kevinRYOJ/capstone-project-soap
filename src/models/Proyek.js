@@ -2,6 +2,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 const Member = require("./Member");
+const Rumah = require("./Rumah");
 //
 // 🧩 Definisi Model Proyek
 //
@@ -43,6 +44,16 @@ const Proyek = sequelize.define(
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
+    id_rumah: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: Rumah,
+        key: "id_rumah",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+    },
   },
   {
     tableName: "proyek", // jika tabel di DB memang bernama 'survey'
@@ -55,5 +66,8 @@ const Proyek = sequelize.define(
 //
 Member.hasMany(Proyek, { foreignKey: "id_member" });
 Proyek.belongsTo(Member, { foreignKey: "id_member" });
+
+Rumah.hasMany(Proyek, { foreignKey: "id_rumah" });
+Proyek.belongsTo(Rumah, { foreignKey: "id_rumah" });
 
 module.exports = Proyek;
