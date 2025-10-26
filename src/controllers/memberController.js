@@ -1,18 +1,31 @@
 const Member = require("../models/Member");
 const Admin = require("../models/Admin");
-const bcrypt = require("bcryptjs"); // 👉 tambahkan bcrypt untuk hashing
+const bcrypt = require("bcryptjs");
 
-// ✅ CREATE
+// ✅ CREATE Member
 exports.createMember = async (req, res) => {
     try {
         const { nama_member, email, password, jabatan, kontak, leader_id, id_admin } = req.body;
 
-        // Validasi input
-        if (!nama_member || !email || !password || !jabatan || !kontak || !leader_id) {
+        // 🔍 Validasi field dasar
+        if (!nama_member || !email || !password || !jabatan || !kontak) {
             return res.status(400).json({ message: "Semua field wajib diisi!" });
         }
 
-        // Cek apakah email sudah terdaftar
+        // 🔍 Validasi jabatan
+        const allowedJabatan = ["Senior leader", "Leader", "Member"];
+        if (!allowedJabatan.includes(jabatan)) {
+            return res.status(400).json({ message: "Jabatan tidak valid!" });
+        }
+
+        // 🔍 Validasi leader_id khusus
+        if (jabatan !== "Senior leader" && !leader_id) {
+            return res.status(400).json({
+                message: "Leader wajib diisi untuk jabatan Leader atau Member!",
+            });
+        }
+
+        // 🔍 Cek apakah email sudah digunakan
         const existingMember = await Member.findOne({ where: { email } });
         if (existingMember) {
             return res.status(400).json({ message: "Email sudah digunakan!" });
@@ -22,16 +35,18 @@ exports.createMember = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        // 💾 Simpan ke database
         const newMember = await Member.create({
             nama_member,
             email,
-            password: hashedPassword, // 👉 simpan hash, bukan plaintext
+            password: hashedPassword,
             jabatan,
             kontak,
-            leader_id,
+            leader_id: jabatan === "Senior leader" ? null : leader_id,
             id_admin,
         });
 
+        // ✅ Response sukses
         res.status(201).json({
             message: "Member berhasil ditambahkan",
             data: {
@@ -41,13 +56,17 @@ exports.createMember = async (req, res) => {
                 jabatan: newMember.jabatan,
             },
         });
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Gagal menambahkan member", error: error.message });
+        res.status(500).json({
+            message: "Gagal menambahkan member",
+            error: error.message,
+        });
     }
 };
 
-// ✅ READ (Semua Member)
+// ✅ READ Semua Member
 exports.getAllMember = async (req, res) => {
     try {
         const members = await Member.findAll({
@@ -57,56 +76,78 @@ exports.getAllMember = async (req, res) => {
                     attributes: ["id_admin", "nama_admin", "email"],
                 },
             ],
-            attributes: { exclude: ["password"] }, // ❌ jangan tampilkan password
+            attributes: { exclude: ["password"] },
         });
         res.status(200).json(members);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Gagal mengambil data member", error: error.message });
+        res.status(500).json({
+            message: "Gagal mengambil data member",
+            error: error.message,
+        });
     }
 };
 
-// ✅ READ (By ID)
+// ✅ READ By ID
 exports.getMemberById = async (req, res) => {
     try {
         const { id } = req.params;
         const member = await Member.findByPk(id, {
             include: [{ model: Admin, attributes: ["id_admin", "nama_admin", "email"] }],
-            attributes: { exclude: ["password"] }, // ❌ jangan kirim password
+            attributes: { exclude: ["password"] },
         });
 
-        if (!member) return res.status(404).json({ message: "Member tidak ditemukan" });
+        if (!member)
+            return res.status(404).json({ message: "Member tidak ditemukan" });
 
         res.status(200).json(member);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Gagal mengambil data member", error: error.message });
+        res.status(500).json({
+            message: "Gagal mengambil data member",
+            error: error.message,
+        });
     }
 };
 
-// ✅ UPDATE
+// ✅ UPDATE Member
 exports.updateMember = async (req, res) => {
     try {
         const { id } = req.params;
         const { nama_member, email, password, jabatan, kontak, leader_id, id_admin } = req.body;
 
         const member = await Member.findByPk(id);
-        if (!member) return res.status(404).json({ message: "Member tidak ditemukan" });
+        if (!member)
+            return res.status(404).json({ message: "Member tidak ditemukan" });
 
-        // Jika ada password baru, hash ulang
+        // 🔍 Validasi jabatan
+        const allowedJabatan = ["Senior leader", "Leader", "Member"];
+        if (jabatan && !allowedJabatan.includes(jabatan)) {
+            return res.status(400).json({ message: "Jabatan tidak valid!" });
+        }
+
+        // 🔍 Validasi leader_id khusus
+        if (jabatan && jabatan !== "Senior leader" && !leader_id) {
+            return res.status(400).json({
+                message: "Leader wajib diisi untuk jabatan Leader atau Member!",
+            });
+        }
+
+        // 🔐 Jika ada password baru → hash ulang
         let hashedPassword = member.password;
         if (password) {
             const salt = await bcrypt.genSalt(10);
             hashedPassword = await bcrypt.hash(password, salt);
         }
 
+        // 🧩 Update data
         await member.update({
             nama_member,
             email,
             password: hashedPassword,
             jabatan,
             kontak,
-            leader_id,
+            leader_id: jabatan === "Senior leader" ? null : leader_id,
             id_admin,
         });
 
@@ -121,21 +162,40 @@ exports.updateMember = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Gagal memperbarui data member", error: error.message });
+        res.status(500).json({
+            message: "Gagal memperbarui data member",
+            error: error.message,
+        });
     }
 };
 
-// ✅ DELETE
+// ✅ DELETE Member
 exports.deleteMember = async (req, res) => {
     try {
         const { id } = req.params;
+
         const member = await Member.findByPk(id);
-        if (!member) return res.status(404).json({ message: "Member tidak ditemukan" });
+        if (!member)
+            return res.status(404).json({ message: "Member tidak ditemukan" });
+
+        // 🧩 Cek apakah member ini punya anggota di bawahnya
+        const hasSubordinates = await Member.findOne({
+            where: { leader_id: id },
+        });
+
+        if (hasSubordinates) {
+            return res.status(400).json({
+                message: "Tidak dapat menghapus member yang masih memiliki bawahan!",
+            });
+        }
 
         await member.destroy();
         res.status(200).json({ message: "Member berhasil dihapus" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Gagal menghapus member", error: error.message });
+        res.status(500).json({
+            message: "Gagal menghapus member",
+            error: error.message,
+        });
     }
 };
