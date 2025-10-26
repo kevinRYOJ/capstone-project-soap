@@ -17,13 +17,28 @@ sequelize
 const authRoutes = require("./routes/auth"); // untuk login admin & member
 const adminRoutes = require("./routes/adminRoutes"); // untuk CRUD admin
 const memberRoutes = require("./routes/memberRoutes"); // untuk CRUD admin
+const kinerjaRoutes = require("./routes/kinerjaMemberRoutes");
+const cabuyRoutes = require("./routes/cabuyRoutes");
+const surveyRoutes = require("./routes/surveyRoutes");
+const proyekRoutes = require("./routes/proyekRoutes");
+const rekomendasiaiRoutes = require("./routes/rekomendasiaiRoutes");
+const crmRoutes = require("./routes/crmRoutes");
+const rumahRoutes = require("./routes/rumahRoutes");
+const propertiRoutes = require("./routes/propertiRoutes");
 
-// const memberRoutes = require("./routes/member"); // (opsional)
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/member", memberRoutes);
-// app.use("/api/member", memberRoutes);
+app.use("/api/kinerja-member", kinerjaRoutes);
+app.use("/api/cabuy", cabuyRoutes);
+app.use("/api/survey", surveyRoutes);
+app.use("/api/proyek", proyekRoutes);
+app.use("/api/rekomendasiai", rekomendasiaiRoutes);
+app.use("/api/crm", crmRoutes);
+app.use("/api/rumah", rumahRoutes);
+app.use("/api/properti", propertiRoutes);
+
 
 // ====== Root Endpoint ======
 app.get("/", (req, res) => {
