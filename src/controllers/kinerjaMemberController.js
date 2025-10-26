@@ -8,7 +8,7 @@ exports.getAllKinerja = async (req, res) => {
             include: [
                 {
                     model: Member,
-                    attributes: ["id_member", "nama_member", "level", "kontak"],
+                    attributes: ["id_member", "nama_member", "kontak", "id_admin", "jabatan", "leader_id", "email"],
                 },
             ],
         });
@@ -31,7 +31,7 @@ exports.getKinerjaById = async (req, res) => {
             include: [
                 {
                     model: Member,
-                    attributes: ["id_member", "nama_member", "level", "kontak"],
+                    attributes: ["id_member", "nama_member", "kontak", "id_admin", "jabatan", "leader_id", "email"],
                 },
             ],
         });
