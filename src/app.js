@@ -25,6 +25,7 @@ const rekomendasiaiRoutes = require("./routes/rekomendasiaiRoutes");
 const crmRoutes = require("./routes/crmRoutes");
 const rumahRoutes = require("./routes/rumahRoutes");
 const propertiRoutes = require("./routes/propertiRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
@@ -37,6 +38,7 @@ app.use("/api/rekomendasiai", rekomendasiaiRoutes);
 app.use("/api/crm", crmRoutes);
 app.use("/api/rumah", rumahRoutes);
 app.use("/api/properti", propertiRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // ====== Root Endpoint ======
 app.get("/", (req, res) => {

@@ -37,7 +37,7 @@ const Member = sequelize.define(
         },
         leader_id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: "member", // ⚡ gunakan nama tabel string, bukan variabel model
                 key: "id_member",
