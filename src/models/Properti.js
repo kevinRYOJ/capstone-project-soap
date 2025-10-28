@@ -16,6 +16,10 @@ const Properti = sequelize.define("Properti", {
         type: DataTypes.TEXT,
         allowNull: false,
     },
+    image: {
+        type: DataTypes.BLOB("long"),
+        allowNull: false,
+    },
     id_rumah: {
         type: DataTypes.INTEGER,
         allowNull: true,

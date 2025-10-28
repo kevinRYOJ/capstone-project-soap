@@ -1,5 +1,10 @@
 const Properti = require("../models/Properti");
 const Rumah = require("../models/Rumah");
+const multer = require("multer");
+
+// simpan file di memori, bukan disk
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 //
 // 📄 GET semua properti
@@ -13,10 +18,18 @@ exports.getAllProperti = async (req, res) => {
             order: [["id_properti", "DESC"]],
         });
 
+        // 🔧 Ubah buffer (BLOB) ke base64
+        const result = data.map((item) => ({
+            ...item.toJSON(),
+            image: item.image
+                ? `data:image/jpeg;base64,${item.image.toString("base64")}`
+                : null,
+        }));
+
         res.status(200).json({
             success: true,
             message: "Data properti berhasil diambil",
-            data,
+            data: result,
         });
     } catch (err) {
         console.error(err);
@@ -26,6 +39,8 @@ exports.getAllProperti = async (req, res) => {
         });
     }
 };
+
+
 
 //
 // 📄 GET properti berdasarkan ID
@@ -63,28 +78,26 @@ exports.getPropertiById = async (req, res) => {
 //
 // ➕ TAMBAH properti baru
 //
-exports.createProperti = async (req, res) => {
-    try {
-        const { nama_properti, deskripsi } = req.body;
+exports.createProperti = [
+    upload.single("image"), // nama field form di React
+    async (req, res) => {
+        try {
+            const { nama_properti, deskripsi, id_rumah } = req.body;
 
-        const properti = await Properti.create({
-            nama_properti,
-            deskripsi,
-        });
+            const newProperti = await Properti.create({
+                nama_properti,
+                deskripsi,
+                image: req.file.buffer, // <-- simpan binary data di DB
+                id_rumah: id_rumah || null,
+            });
 
-        res.status(201).json({
-            success: true,
-            message: "Properti berhasil ditambahkan",
-            data: properti,
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({
-            success: false,
-            message: "Gagal menambahkan properti",
-        });
-    }
-};
+            res.status(201).json({ message: "Properti berhasil dibuat", data: newProperti });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Gagal menyimpan properti", error });
+        }
+    },
+];
 
 //
 // ✏️ UPDATE properti berdasarkan ID
@@ -92,7 +105,7 @@ exports.createProperti = async (req, res) => {
 exports.updateProperti = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nama_properti, deskripsi } = req.body;
+        const { nama_properti, deskripsi, image } = req.body;
 
         const properti = await Properti.findByPk(id);
         if (!properti) {
@@ -105,6 +118,7 @@ exports.updateProperti = async (req, res) => {
         await properti.update({
             nama_properti,
             deskripsi,
+            image,
         });
 
         res.status(200).json({

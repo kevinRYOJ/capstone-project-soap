@@ -13,6 +13,17 @@ sequelize
     .then(() => console.log("✅ Koneksi database Sequelize berhasil"))
     .catch((err) => console.error("❌ Gagal koneksi database:", err.message));
 
+// const sequelize = require("./config/db");
+
+// 🔄 Sinkronisasi model dengan database
+// sequelize
+//     .sync({ alter: true })
+//     .then(() => {
+//         console.log("✅ Database synchronized successfully!");
+//     })
+//     .catch((err) => {
+//         console.error("❌ Error syncing database:", err);
+//     });
 // ====== Routes ======
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/adminRoutes");
@@ -26,6 +37,7 @@ const crmRoutes = require("./routes/crmRoutes");
 const rumahRoutes = require("./routes/rumahRoutes");
 const propertiRoutes = require("./routes/propertiRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const memberDashboardRoutes = require("./routes/memberDashboardRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
@@ -39,6 +51,7 @@ app.use("/api/crm", crmRoutes);
 app.use("/api/rumah", rumahRoutes);
 app.use("/api/properti", propertiRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/member-dashboard", memberDashboardRoutes);
 
 // ====== Root Endpoint ======
 app.get("/", (req, res) => {
