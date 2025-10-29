@@ -24,6 +24,10 @@ const Rumah = sequelize.define("Rumah", {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    harga: {
+        type: DataTypes.DECIMAL(15, 2),
+        allowNull: false,
+    },
     status_rumah: {
         type: DataTypes.ENUM("tersedia", "terjual"),
         allowNull: false,
@@ -45,7 +49,7 @@ const Rumah = sequelize.define("Rumah", {
 }
 );
 
-// Relasi: Admin memiliki banyak Member
+// Relasi: Admin memiliki banyak Rumah
 Proyek.hasMany(Rumah, { foreignKey: "id_proyek" });
 Rumah.belongsTo(Proyek, { foreignKey: "id_proyek" });
 

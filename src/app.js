@@ -13,17 +13,17 @@ sequelize
     .then(() => console.log("✅ Koneksi database Sequelize berhasil"))
     .catch((err) => console.error("❌ Gagal koneksi database:", err.message));
 
-// const sequelize = require("./config/db");
-
 // 🔄 Sinkronisasi model dengan database
 // sequelize
-//     .sync({ alter: true })
+//     .sync({ alter: true }) // ⬅️ tambahkan alter: true sementara
 //     .then(() => {
-//         console.log("✅ Database synchronized successfully!");
+//         console.log("✅ Database synchronized successfully (with alter mode)!");
+//         console.log("💡 Cek tabel rumah, kolom harga seharusnya sudah muncul.");
 //     })
 //     .catch((err) => {
 //         console.error("❌ Error syncing database:", err);
 //     });
+
 // ====== Routes ======
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/adminRoutes");

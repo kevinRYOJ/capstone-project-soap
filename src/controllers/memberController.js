@@ -75,6 +75,11 @@ exports.getAllMember = async (req, res) => {
                     model: Admin,
                     attributes: ["id_admin", "nama_admin", "email"],
                 },
+                {
+                    model: Member,
+                    as: "leader",
+                    attributes: ["id_member", "nama_member"]
+                }
             ],
             attributes: { exclude: ["password"] },
         });

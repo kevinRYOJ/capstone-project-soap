@@ -67,7 +67,9 @@ Admin.hasMany(Member, { foreignKey: "id_admin" });
 Member.belongsTo(Admin, { foreignKey: "id_admin" });
 
 // 🧩 Self-referencing relationship
-Member.hasMany(Member, { as: "Anggota", foreignKey: "leader_id" });
-Member.belongsTo(Member, { as: "Leader", foreignKey: "leader_id" });
+Member.belongsTo(Member, {
+    foreignKey: "leader_id",
+    as: "leader",
+});
 
 module.exports = Member;

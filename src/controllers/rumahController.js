@@ -72,6 +72,7 @@ exports.createRumah = async (req, res) => {
             luas_bangunan,
             jumlah_kamar,
             status_rumah,
+            harga,
             id_proyek,
         } = req.body;
 
@@ -81,6 +82,7 @@ exports.createRumah = async (req, res) => {
             luas_bangunan,
             jumlah_kamar,
             status_rumah,
+            harga,
             id_proyek,
         });
 
@@ -110,6 +112,7 @@ exports.updateRumah = async (req, res) => {
             luas_bangunan,
             jumlah_kamar,
             status_rumah,
+            harga,
             id_proyek,
         } = req.body;
 
@@ -127,6 +130,7 @@ exports.updateRumah = async (req, res) => {
             luas_bangunan,
             jumlah_kamar,
             status_rumah,
+            harga,
             id_proyek,
         });
 

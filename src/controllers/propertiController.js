@@ -13,7 +13,10 @@ exports.getAllProperti = async (req, res) => {
     try {
         const data = await Properti.findAll({
             include: [
-                { model: Rumah, attributes: ["id_rumah", "alamat", "tipe_rumah"] },
+                {
+                    model: Rumah,
+                    attributes: ["id_rumah", "alamat", "tipe_rumah", "luas_bangunan", "jumlah_kamar", "status_rumah", "harga"],
+                },
             ],
             order: [["id_properti", "DESC"]],
         });
@@ -45,13 +48,17 @@ exports.getAllProperti = async (req, res) => {
 //
 // 📄 GET properti berdasarkan ID
 //
+// 📄 GET properti berdasarkan ID (jika image disimpan sebagai BLOB)
 exports.getPropertiById = async (req, res) => {
     try {
         const { id } = req.params;
 
         const data = await Properti.findByPk(id, {
             include: [
-                { model: Rumah, attributes: ["id_rumah", "alamat", "tipe_rumah"] },
+                {
+                    model: Rumah,
+                    attributes: ["id_rumah", "alamat", "tipe_rumah", "luas_bangunan", "jumlah_kamar", "status_rumah", "harga"],
+                },
             ],
         });
 
@@ -62,9 +69,16 @@ exports.getPropertiById = async (req, res) => {
             });
         }
 
+        const propertiData = data.toJSON();
+
+        // 🔄 Konversi Buffer ke Base64
+        if (propertiData.image) {
+            propertiData.image = `data:image/jpeg;base64,${propertiData.image.toString("base64")}`;
+        }
+
         res.status(200).json({
             success: true,
-            data,
+            data: propertiData,
         });
     } catch (err) {
         console.error(err);
@@ -74,6 +88,7 @@ exports.getPropertiById = async (req, res) => {
         });
     }
 };
+
 
 //
 // ➕ TAMBAH properti baru
