@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 const Admin = require("./Admin");
+const Proyek = require("./Proyek");
 
 const Member = sequelize.define(
     "Member",
@@ -39,11 +40,11 @@ const Member = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: true,
             references: {
-                model: "member", // ⚡ gunakan nama tabel string, bukan variabel model
+                model: "member",
                 key: "id_member",
             },
             onUpdate: "CASCADE",
-            onDelete: "SET NULL", // lebih aman supaya jika leader dihapus, anak tidak ikut terhapus
+            onDelete: "SET NULL",
         },
         id_admin: {
             type: DataTypes.INTEGER,
@@ -55,6 +56,7 @@ const Member = sequelize.define(
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         },
+        // ⚠️ id_proyek dihapus karena FK harus ada di tabel proyek
     },
     {
         tableName: "member",
@@ -62,14 +64,17 @@ const Member = sequelize.define(
     }
 );
 
-// Relasi: Admin memiliki banyak Member
+/* RELASI */
+
+// Member → Admin (banyak member di bawah 1 admin)
 Admin.hasMany(Member, { foreignKey: "id_admin" });
 Member.belongsTo(Admin, { foreignKey: "id_admin" });
 
-// 🧩 Self-referencing relationship
-Member.belongsTo(Member, {
-    foreignKey: "leader_id",
-    as: "leader",
-});
+// Member → Leader (self reference)
+Member.belongsTo(Member, { foreignKey: "leader_id", as: "leader" });
+
+// ✅ Member → Proyek (One-to-Many)
+Member.hasMany(Proyek, { foreignKey: "id_member" });
+Proyek.belongsTo(Member, { foreignKey: "id_member" });
 
 module.exports = Member;
