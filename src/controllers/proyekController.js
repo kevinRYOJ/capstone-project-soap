@@ -1,7 +1,6 @@
 // file: controllers/proyekController.js
 const Proyek = require("../models/Proyek");
 const Member = require("../models/Member");
-const Rumah = require("../models/Rumah");
 
 //
 // 📄 GET semua proyek

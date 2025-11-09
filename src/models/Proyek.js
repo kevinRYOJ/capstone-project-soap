@@ -1,10 +1,6 @@
-// file: models/Proyek.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-const Member = require("./Member");
-//
-// 🧩 Definisi Model Proyek
-//
+
 const Proyek = sequelize.define(
   "Proyek",
   {
@@ -35,25 +31,19 @@ const Proyek = sequelize.define(
     },
     id_member: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
-        model: Member,
+        model: "member",
         key: "id_member",
       },
       onUpdate: "CASCADE",
-      onDelete: "CASCADE",
+      onDelete: "SET NULL",
     },
   },
   {
-    tableName: "proyek", // jika tabel di DB memang bernama 'survey'
-    timestamps: false, // nonaktifkan created_at & updated_at
+    tableName: "proyek",
+    timestamps: false,
   }
 );
-
-//
-// 🔗 Relasi antar model
-//
-Member.hasMany(Proyek, { foreignKey: "id_member" });
-Proyek.belongsTo(Member, { foreignKey: "id_member" });
 
 module.exports = Proyek;
