@@ -1,6 +1,6 @@
 // controllers/CabuyController.js
 const Cabuy = require("../models/Cabuy");
-const Member = require("../models/Member");
+
 
 // ✅ GET semua Cabuy
 exports.getCabuys = async (req, res) => {

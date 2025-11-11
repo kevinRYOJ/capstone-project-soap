@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-const Member = require("./Member");
+
 
 const Cabuy = sequelize.define(
     "Cabuy",
@@ -31,16 +31,7 @@ const Cabuy = sequelize.define(
             type: DataTypes.DATE,
             allowNull: false,
         },
-        id_member: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model: Member,
-                key: "id_member",
-            },
-            onUpdate: "CASCADE",
-            onDelete: "CASCADE",
-        },
+    
     },
     {
         tableName: "cabuy",
@@ -48,8 +39,6 @@ const Cabuy = sequelize.define(
     }
 );
 
-Member.hasMany(Cabuy, { foreignKey: "id_member" });
-Cabuy.belongsTo(Member, { foreignKey: "id_member" });
 
 
 module.exports = Cabuy;
