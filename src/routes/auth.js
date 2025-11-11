@@ -1,57 +1,114 @@
 const express = require("express");
-const router = express.Router();
+const db = require("../config/db"); // ✅ pastikan ini sesuai path file db kamu
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Admin = require("../models/Admin");
-const Member = require("../models/Member");
 
-router.post("/login", async (req, res) => {
+const router = express.Router();
+const SECRET_KEY = process.env.JWT_SECRET || "secret123"; // pakai .env lebih aman
+
+// --- LOGIN ADMIN ---
+router.post("/login-admin", async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Cek di tabel admin dulu
-        const admin = await Admin.findOne({ where: { email } });
-        if (admin) {
-            const valid = await bcrypt.compare(password, admin.password);
-            if (!valid) return res.status(401).json({ message: "Password salah" });
+        // 🔹 Gunakan Sequelize QueryTypes.SELECT (bukan destructuring)
+        const rows = await db.query(
+            "SELECT * FROM admin WHERE email = :email",
+            {
+                replacements: { email },
+                type: db.QueryTypes.SELECT,
+            }
+        );
 
-            const token = jwt.sign({ id: admin.id_admin, source: "admin" }, "SECRET_KEY", { expiresIn: "1d" });
-            return res.json({
-                token,
-                user: {
-                    id: admin.id_admin,
-                    nama: admin.nama_admin,
-                    email: admin.email,
-                    source: "admin",
-                },
-            });
-        }
+        if (rows.length === 0)
+            return res.status(401).json({ message: "Email tidak ditemukan" });
 
-        // Kalau tidak ditemukan di admin, cek di member
-        const member = await Member.findOne({ where: { email } });
-        if (member) {
-            const valid = await bcrypt.compare(password, member.password);
-            if (!valid) return res.status(401).json({ message: "Password salah" });
+        const admin = rows[0];
 
-            const token = jwt.sign({ id: member.id_member, source: "member" }, "SECRET_KEY", { expiresIn: "1d" });
-            return res.json({
-                token,
-                user: {
-                    id: member.id_member,
-                    nama: member.nama_member,
-                    email: member.email,
-                    source: "member",
-                },
-            });
-        }
+        const validPass = await bcrypt.compare(password, admin.password);
+        if (!validPass)
+            return res.status(401).json({ message: "Password salah" });
 
-        // Jika tidak ditemukan di keduanya
-        return res.status(404).json({ message: "User tidak ditemukan di admin maupun member" });
+        const token = jwt.sign(
+            { id: admin.id_admin, role: "admin" },
+            SECRET_KEY,
+            { expiresIn: "1d" }
+        );
 
-    } catch (error) {
-        console.error("Login error:", error);
-        return res.status(500).json({ message: "Terjadi kesalahan server" });
+        res.json({
+            token,
+            user: {
+                id: admin.id_admin,
+                nama: admin.nama_admin,
+                email: admin.email,
+                role: "admin",
+            },
+        });
+    } catch (err) {
+        console.error("❌ Login admin error:", err);
+        res.status(500).json({ message: "Terjadi kesalahan pada server", error: err.message });
     }
 });
+
+
+// --- LOGIN MEMBER ---
+router.post("/login-member", async (req, res) => {
+    try {
+        const { email, password, jabatan } = req.body;
+        // console.log("🟢 Data login:", email, jabatan);
+
+        // ✅ Sequelize query dengan replacements
+        const rows = await db.query(
+            "SELECT * FROM member WHERE email = :email AND jabatan = :jabatan",
+            {
+                replacements: { email, jabatan },
+                type: db.QueryTypes.SELECT,
+            }
+        );
+
+        // console.log("🔹 Query result:", rows);
+
+        // ✅ rows sudah array biasa, tanpa destructuring
+        if (!rows || rows.length === 0) {
+            return res.status(404).json({ message: "Akun tidak ditemukan" });
+        }
+
+        const user = rows[0];
+
+        // 🔐 Bandingkan password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Password salah" });
+        }
+
+        // 🎫 Buat token JWT
+        const token = jwt.sign(
+            { id: user.id_member, role: user.jabatan.toLowerCase() },
+            SECRET_KEY,
+            { expiresIn: "1d" }
+        );
+
+        // ✅ Respon sukses
+        res.json({
+            token,
+            user: {
+                id_member: user.id_member,
+                nama_member: user.nama_member,
+                kontak: user.kontak,
+                id_admin: user.id_admin,
+                jabatan: user.jabatan,
+                leader_id: user.leader_id,
+                email: user.email,
+                role: user.jabatan.toLowerCase(),
+            },
+        });
+
+    } catch (err) {
+        console.error("❌ Error login-member:", err);
+        res.status(500).json({ message: "Server error", error: err.message });
+    }
+});
+
+
 
 module.exports = router;
