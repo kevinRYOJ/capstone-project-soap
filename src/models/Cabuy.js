@@ -21,25 +21,25 @@ const Cabuy = sequelize.define(
         status: {
             type: DataTypes.ENUM("Baru", "Follow Up", "Closing", "Lost"),
             defaultValue: "Baru",
-            allowNull: false,
+            allowNull: true,
         },
         tanggal_follow_up: {
             type: DataTypes.DATE,
-            allowNull: false,
+            allowNull: true,
         },
         tanggal_masuk: {
             type: DataTypes.DATE,
-            allowNull: false,
+            allowNull: true,
         },
         id_member: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: Member,
                 key: "id_member",
             },
             onUpdate: "CASCADE",
-            onDelete: "CASCADE",
+            onDelete: "SET NULL",
         },
     },
     {
