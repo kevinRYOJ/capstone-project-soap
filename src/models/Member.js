@@ -48,7 +48,7 @@ const Member = sequelize.define(
         },
         id_admin: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: Admin,
                 key: "id_admin",
@@ -56,7 +56,6 @@ const Member = sequelize.define(
             onUpdate: "CASCADE",
             onDelete: "CASCADE",
         },
-        // ⚠️ id_proyek dihapus karena FK harus ada di tabel proyek
     },
     {
         tableName: "member",
@@ -66,15 +65,31 @@ const Member = sequelize.define(
 
 /* RELASI */
 
-// Member → Admin (banyak member di bawah 1 admin)
-Admin.hasMany(Member, { foreignKey: "id_admin" });
-Member.belongsTo(Admin, { foreignKey: "id_admin" });
+// Admin → Member (hanya untuk Senior leader)
+Admin.hasMany(Member, {
+    foreignKey: "id_admin",
+    as: "seniorLeaders",
+    scope: {
+        jabatan: "Senior leader",
+    },
+});
+Member.belongsTo(Admin, {
+    foreignKey: "id_admin",
+    as: "admin",
+});
 
-// Member → Leader (self reference)
+/* Self Reference: Member → Leader */
 Member.belongsTo(Member, { foreignKey: "leader_id", as: "leader" });
 
-// ✅ Member → Proyek (One-to-Many)
+/* Member → Proyek */
 Member.hasMany(Proyek, { foreignKey: "id_member" });
 Proyek.belongsTo(Member, { foreignKey: "id_member" });
+
+/* ✅ HOOK: hanya Senior leader yang boleh punya id_admin */
+Member.addHook("beforeSave", (member) => {
+    if (member.jabatan !== "Senior leader" && member.id_admin !== null) {
+        throw new Error("Hanya Senior Leader yang boleh terhubung ke Admin!");
+    }
+});
 
 module.exports = Member;
