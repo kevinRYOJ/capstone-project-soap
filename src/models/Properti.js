@@ -1,31 +1,49 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const Member = require("./Member");
 
-
-const Properti = sequelize.define("Properti", {
+const Properti = sequelize.define(
+  "Properti",
+  {
     id_properti: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
     nama_properti: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    deskripsi: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    deskripsi: {
-        type: DataTypes.TEXT,
-        allowNull: false,
+    lokasi: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-    image: {
-        type: DataTypes.BLOB("long"),
-        allowNull: false,
+    kontraktor: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-
-
-}, {
+    id_member: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: Member,
+        key: "id_member",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+    },
+  },
+  {
     tableName: "properti",
-    timestamps: true, // sesuai diagram (nggak ada created_at / updated_at)
-}
+    timestamps: true,
+  }
 );
+
+// Relasi yang benar
+Member.hasMany(Properti, { foreignKey: "id_member" });
 
 module.exports = Properti;
