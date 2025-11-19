@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-
+const Member = require("./Member");
 
 const Cabuy = sequelize.define(
     "Cabuy",
@@ -31,9 +31,6 @@ const Cabuy = sequelize.define(
             type: DataTypes.DATE,
             allowNull: true,
         },
-<<<<<<< HEAD
-    
-=======
         id_member: {
             type: DataTypes.INTEGER,
             allowNull: true,
@@ -44,13 +41,14 @@ const Cabuy = sequelize.define(
             onUpdate: "CASCADE",
             onDelete: "SET NULL",
         },
->>>>>>> b8ddb53b0e6b10d42bb043164b7f546a2be7fa9e
     },
     {
         tableName: "cabuy",
         timestamps: false, // sesuai diagram (nggak ada created_at / updated_at)
     }
 );
+
+Member.hasMany(Cabuy, { foreignKey: "id_member" });
 
 
 

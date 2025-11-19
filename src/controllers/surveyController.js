@@ -2,7 +2,7 @@
 const Survey = require("../models/Survey");
 const Member = require("../models/Member");
 const Cabuy = require("../models/Cabuy");
-const Proyek = require("../models/Proyek");
+const Rumah = require("../models/Rumah");
 
 //
 // 📌 Helper untuk format tanggal ke ISO / MySQL (opsional)
@@ -30,8 +30,8 @@ exports.getAllSurvey = async (req, res) => {
                     attributes: ["id_cabuy", "nama_cabuy", "kontak", "email", "status"],
                 },
                 {
-                    model: Proyek,
-                    attributes: ["id_proyek", "nama_proyek", "lokasi", "tipe", "harga", "status"],
+                    model: Rumah,
+                    attributes: ["id_rumah", "tipe", "lt", "lb", "jml_kamar", "jml_lantai", "image", "id_properti"],
                 },
             ],
             order: [["id_survey", "ASC"]],
@@ -60,7 +60,7 @@ exports.getSurveyById = async (req, res) => {
                 { model: Admin, attributes: ["id_admin", "nama_admin"] },
                 { model: Member, attributes: ["id_member", "nama_member"] },
                 { model: Cabuy, attributes: ["id_cabuy", "nama_cabuy"] },
-                { model: Proyek, attributes: ["id_proyek", "nama_proyek"] },
+                { model: Rumah, attributes: ["id_rumah", "tipe", "lt", "lb", "jml_kamar", "jml_lantai", "image", "id_properti"] },
             ],
         });
 
@@ -80,23 +80,23 @@ exports.getSurveyById = async (req, res) => {
 //
 exports.createSurvey = async (req, res) => {
     try {
-        const { id_cabuy, id_member, id_proyek, status_survey, tanggal_survey } = req.body;
+        const { id_cabuy, id_member, id_rumah, status_survey, tanggal_survey } = req.body;
 
         // 🔸 Validasi foreign key
-        const [cabuy, member, proyek] = await Promise.all([
+        const [cabuy, member, rumah] = await Promise.all([
             Cabuy.findByPk(id_cabuy),
             Member.findByPk(id_member),
-            Proyek.findByPk(id_proyek),
+            Rumah.findByPk(id_rumah),
         ]);
 
-        if (!cabuy || !member || !proyek) {
-            return res.status(400).json({ success: false, message: "Data relasi (Cabuy, Member, Proyek) tidak valid" });
+        if (!cabuy || !member || !rumah) {
+            return res.status(400).json({ success: false, message: "Data relasi (Cabuy, Member, Rumah) tidak valid" });
         }
 
         const newSurvey = await Survey.create({
             id_cabuy,
             id_member,
-            id_proyek,
+            id_rumah,
             status_survey: status_survey || "Belum",
             tanggal_survey: formatDateTime(tanggal_survey),
         });
@@ -118,7 +118,7 @@ exports.createSurvey = async (req, res) => {
 exports.updateSurvey = async (req, res) => {
     try {
         const { id } = req.params;
-        const { id_cabuy, id_member, id_proyek, status_survey, tanggal_survey } = req.body;
+        const { id_cabuy, id_member, id_rumah, status_survey, tanggal_survey } = req.body;
 
         const survey = await Survey.findByPk(id);
         if (!survey) {
@@ -128,7 +128,7 @@ exports.updateSurvey = async (req, res) => {
         await survey.update({
             id_cabuy: id_cabuy ?? survey.id_cabuy,
             id_member: id_member ?? survey.id_member,
-            id_proyek: id_proyek ?? survey.id_proyek,
+            id_rumah: id_rumah ?? survey.id_rumah,
             status_survey: status_survey ?? survey.status_survey,
             tanggal_survey: tanggal_survey ? formatDateTime(tanggal_survey) : survey.tanggal_survey,
         });

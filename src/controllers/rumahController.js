@@ -13,14 +13,13 @@ const upload = multer({ storage: storage });
 //
 exports.getAllRumah = async (req, res) => {
     try {
-        const data = await Properti.findAll({
+        const data = await Rumah.findAll({
             include: [
                 { model: Properti, attributes: ["id_properti", "nama_properti"] },
             ],
-            order: [["id_properti", "DESC"]],
+            order: [["id_rumah", "DESC"]],
         });
 
-        // convert gambar ke base64
         const result = data.map((item) => ({
             ...item.toJSON(),
             image: item.image
@@ -78,17 +77,17 @@ exports.getRumahById = async (req, res) => {
         console.error(err);
         res.status(500).json({
             success: false,
-            message: "Terjadi kesalahan saat mengambil data prumah",
+            message: "Terjadi kesalahan saat mengambil data rumah",
         });
     }
 };
 
 
 //
-// ➕ TAMBAH rumah baru (SEMUA MEMBER BOLEH)
+// ➕ TAMBAH rumah baru
 //
 exports.createRumah = [
-    upload.single("image"), // field: image
+    upload.single("image"),
     async (req, res) => {
         try {
             const {
@@ -99,6 +98,7 @@ exports.createRumah = [
                 jml_lantai,
                 harga,
                 id_properti,
+                id_member
             } = req.body;
 
             // Validasi member ada
@@ -118,6 +118,7 @@ exports.createRumah = [
                 jml_lantai,
                 harga,
                 id_properti,
+                id_member,
                 image: req.file ? req.file.buffer : null,
             });
 

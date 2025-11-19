@@ -3,7 +3,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 const Member = require("./Member");
 const Cabuy = require("./Cabuy");
-const Proyek = require("./Proyek");
+const Rumah = require("./Rumah");
 
 const Survey = sequelize.define(
   "Survey",
@@ -33,12 +33,12 @@ const Survey = sequelize.define(
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    id_proyek: {
+    id_rumah: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: Proyek,
-        key: "id_proyek",
+        model: Rumah,
+        key: "id_rumah",
       },
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
@@ -71,7 +71,7 @@ Cabuy.hasMany(Survey, { foreignKey: "id_cabuy" });
 Survey.belongsTo(Cabuy, { foreignKey: "id_cabuy" });
 
 // Proyek memiliki banyak Survey
-Proyek.hasMany(Survey, { foreignKey: "id_proyek" });
-Survey.belongsTo(Proyek, { foreignKey: "id_proyek" });
+Rumah.hasMany(Survey, { foreignKey: "id_rumah" });
+Survey.belongsTo(Rumah, { foreignKey: "id_rumah" });
 
 module.exports = Survey;

@@ -1,8 +1,8 @@
 const Admin = require("../models/Admin");
 const Member = require("../models/Member");
-const Proyek = require("../models/Proyek");
-const Survey = require("../models/Survey");
 const Properti = require("../models/Properti");
+const Survey = require("../models/Survey");
+const Rumah = require("../models/Rumah");
 
 exports.getDashboardStats = async (req, res) => {
   try {
@@ -13,7 +13,7 @@ exports.getDashboardStats = async (req, res) => {
       where: adminId ? { id_admin: adminId } : {},
     });
 
-    const projectCount = await Proyek.count({
+    const propertiCount = await Properti.count({
       where: adminId ? { id_admin: adminId } : {},
     });
 
@@ -21,15 +21,15 @@ exports.getDashboardStats = async (req, res) => {
       where: adminId ? { id_admin: adminId } : {},
     });
 
-    const propertyCount = await Properti.count({
+    const rumahCount = await Rumah.count({
       where: adminId ? { id_admin: adminId } : {},
     });
 
     res.status(200).json({
       memberCount,
-      projectCount,
+      propertiCount,
       surveyCount,
-      propertyCount,
+      rumahCount,
     });
   } catch (error) {
     console.error(error);

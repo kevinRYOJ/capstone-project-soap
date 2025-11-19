@@ -2,7 +2,6 @@ const Properti = require("../models/Properti");
 const Member = require("../models/Member");
 
 // 📄 GET semua properti
-//
 exports.getAllProperti = async (req, res) => {
     try {
         const data = await Properti.findAll({
@@ -69,35 +68,34 @@ exports.getPropertiById = async (req, res) => {
 
 
 //
-// ➕ TAMBAH properti baru (HANYA untuk senior leader)
+// ➕ TAMBAH properti baru
 //
 exports.createProperti = [
     async (req, res) => {
         try {
             const { nama_properti, deskripsi, lokasi, kontraktor, id_member } = req.body;
 
-            // 💥 Cek apakah member adalah senior leader
+            // cek apakah member adalah senior leader
             const member = await Member.findOne({
                 where: {
                     id_member,
-                    jabatan: "senior leader",
+                    jabatan: "Senior leader",
                 },
             });
 
             if (!member) {
                 return res.status(403).json({
                     success: false,
-                    message: "Hanya member dengan jabatan 'senior leader' yang dapat menambahkan properti.",
+                    message: "Hanya Senior leader yang dapat menambahkan properti.",
                 });
             }
 
-            // Jika member valid → buat properti
             const newProperti = await Properti.create({
                 nama_properti,
                 deskripsi,
                 lokasi,
                 kontraktor,
-                id_member: member.id_member, // pastikan terhubung
+                id_member: member.id_member,
             });
 
             res.status(201).json({

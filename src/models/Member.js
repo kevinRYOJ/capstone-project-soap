@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 const Admin = require("./Admin");
-const Proyek = require("./Properti");
 
 const Member = sequelize.define(
     "Member",
@@ -63,29 +62,7 @@ const Member = sequelize.define(
     }
 );
 
-/* RELASI */
-
-// Admin → Member (hanya untuk Senior leader)
-Admin.hasMany(Member, {
-    foreignKey: "id_admin",
-    as: "seniorLeaders",
-    scope: {
-        jabatan: "Senior leader",
-    },
-});
-Member.belongsTo(Admin, {
-    foreignKey: "id_admin",
-    as: "admin",
-});
-
-/* Self Reference: Member → Leader */
-Member.belongsTo(Member, { foreignKey: "leader_id", as: "leader" });
-
-/* Member → Proyek */
-Member.hasMany(Proyek, { foreignKey: "id_member" });
-Proyek.belongsTo(Member, { foreignKey: "id_member" });
-
-/* ✅ HOOK: hanya Senior leader yang boleh punya id_admin */
+// HOOK: Hanya Senior Leader yang boleh terhubung ke Admin
 Member.addHook("beforeSave", (member) => {
     if (member.jabatan !== "Senior leader" && member.id_admin !== null) {
         throw new Error("Hanya Senior Leader yang boleh terhubung ke Admin!");

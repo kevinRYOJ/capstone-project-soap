@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-const Member = require("./Member");
 
 const Properti = sequelize.define(
   "Properti",
@@ -15,8 +14,8 @@ const Properti = sequelize.define(
       allowNull: false,
     },
     deskripsi: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     lokasi: {
       type: DataTypes.STRING,
@@ -30,7 +29,7 @@ const Properti = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: Member,
+        model: "member",
         key: "id_member",
       },
       onUpdate: "CASCADE",
@@ -42,8 +41,5 @@ const Properti = sequelize.define(
     timestamps: true,
   }
 );
-
-// Relasi yang benar
-Member.hasMany(Properti, { foreignKey: "id_member" });
 
 module.exports = Properti;

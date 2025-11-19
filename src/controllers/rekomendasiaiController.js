@@ -1,7 +1,7 @@
 // file: controllers/rekomendasiAiController.js
 const Rekomendasi_ai = require("../models/Rekomendasi_ai");
 const Cabuy = require("../models/Cabuy");
-const Proyek = require("../models/Proyek");
+const Properti = require("../models/Properti");
 
 //
 // 📄 GET semua rekomendasi AI
@@ -11,7 +11,7 @@ exports.getAllRekomendasi = async (req, res) => {
     const data = await Rekomendasi_ai.findAll({
       include: [
         { model: Cabuy, attributes: ["id_cabuy", "nama_cabuy"] },
-        { model: Proyek, attributes: ["id_proyek", "nama_proyek"] },
+        { model: Properti, attributes: ["id_properti", "nama_properti"] },
       ],
       order: [["id_rekomendasi", "DESC"]],
     });
@@ -40,7 +40,7 @@ exports.getRekomendasiById = async (req, res) => {
     const data = await Rekomendasi_ai.findByPk(id, {
       include: [
         { model: Cabuy, attributes: ["id_cabuy", "nama_cabuy"] },
-        { model: Proyek, attributes: ["id_proyek", "nama_proyek"] },
+        { model: Properti, attributes: ["id_properti", "nama_properti"] },
       ],
     });
 
@@ -69,12 +69,12 @@ exports.getRekomendasiById = async (req, res) => {
 //
 exports.createRekomendasi = async (req, res) => {
   try {
-    const { skor, id_cabuy, id_proyek } = req.body;
+    const { skor, id_cabuy, id_properti } = req.body;
 
     const rekomendasi = await Rekomendasi_ai.create({
       skor,
       id_cabuy,
-      id_proyek,
+      id_properti,
     });
 
     res.status(201).json({
@@ -97,7 +97,7 @@ exports.createRekomendasi = async (req, res) => {
 exports.updateRekomendasi = async (req, res) => {
   try {
     const { id } = req.params;
-    const { skor, id_cabuy, id_proyek } = req.body;
+    const { skor, id_cabuy, id_properti } = req.body;
 
     const rekomendasi = await Rekomendasi_ai.findByPk(id);
     if (!rekomendasi) {
@@ -110,7 +110,7 @@ exports.updateRekomendasi = async (req, res) => {
     await rekomendasi.update({
       skor,
       id_cabuy,
-      id_proyek,
+      id_properti,
     });
 
     res.status(200).json({

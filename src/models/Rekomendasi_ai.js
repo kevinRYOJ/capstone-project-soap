@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-const Proyek = require("./Proyek");
+const Properti = require("./Properti");
 const Cabuy = require("./Cabuy");
 
 //
@@ -28,20 +28,20 @@ const Rekomendasi_ai = sequelize.define(
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    id_proyek: {
+    id_properti: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: Proyek,
-        key: "id_proyek",
+        model: Properti,
+        key: "id_properti",
       },
       onUpdate: "CASCADE",
       onDelete: "SET NULL",
     },
   },
   {
-    tableName: "rekomendasi_ai", 
-    timestamps: false, 
+    tableName: "rekomendasi_ai",
+    timestamps: false,
   }
 );
 
@@ -54,8 +54,8 @@ Cabuy.hasMany(Rekomendasi_ai, { foreignKey: "id_cabuy" });
 Rekomendasi_ai.belongsTo(Cabuy, { foreignKey: "id_cabuy" });
 
 
-Proyek.hasMany(Rekomendasi_ai, { foreignKey: "id_proyek" });
-Rekomendasi_ai.belongsTo(Proyek, { foreignKey: "id_proyek" });
+Properti.hasMany(Rekomendasi_ai, { foreignKey: "id_properti" });
+Rekomendasi_ai.belongsTo(Properti, { foreignKey: "id_properti" });
 
 //
 // 🚀 Export model

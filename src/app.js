@@ -11,7 +11,10 @@ app.use(express.json());
 sequelize
     .authenticate()
     .then(() => console.log("✅ Koneksi database Sequelize berhasil"))
+
     .catch((err) => console.error("❌ Gagal koneksi database:", err.message));
+require("./models/asosiation.js");
+
 
 // 🔄 Sinkronisasi model dengan database
 // sequelize
@@ -31,7 +34,7 @@ const memberRoutes = require("./routes/memberRoutes");
 const kinerjaMemberRoutes = require("./routes/kinerjaMemberRoutes");
 const cabuyRoutes = require("./routes/cabuyRoutes");
 const surveyRoutes = require("./routes/surveyRoutes");
-const proyekRoutes = require("./routes/proyekRoutes");
+const rumahRoutes = require("./routes/rumahRoutes");
 const rekomendasiaiRoutes = require("./routes/rekomendasiaiRoutes");
 const crmRoutes = require("./routes/crmRoutes");
 const propertiRoutes = require("./routes/propertiRoutes");
@@ -44,7 +47,7 @@ app.use("/api/member", memberRoutes);
 app.use("/api/kinerja-member", kinerjaMemberRoutes);
 app.use("/api/cabuy", cabuyRoutes);
 app.use("/api/survey", surveyRoutes);
-app.use("/api/proyek", proyekRoutes);
+app.use("/api/rumah", rumahRoutes);
 app.use("/api/rekomendasiai", rekomendasiaiRoutes);
 app.use("/api/crm", crmRoutes);
 app.use("/api/properti", propertiRoutes);
