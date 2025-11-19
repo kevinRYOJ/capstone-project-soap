@@ -1,12 +1,6 @@
 const Properti = require("../models/Properti");
-const multer = require("multer");
+const Member = require("../models/Member");
 
-// simpan file ke memory (buffer)
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-
-//
 // 📄 GET semua properti
 //
 exports.getAllProperti = async (req, res) => {
@@ -15,7 +9,6 @@ exports.getAllProperti = async (req, res) => {
             order: [["id_properti", "DESC"]],
         });
 
-        // Convert blob ke base64
         const result = data.map((item) => ({
             ...item.toJSON(),
             image: item.image
@@ -56,7 +49,6 @@ exports.getPropertiById = async (req, res) => {
         }
 
         const propertiData = data.toJSON();
-
         if (propertiData.image) {
             propertiData.image = `data:image/jpeg;base64,${propertiData.image.toString("base64")}`;
         }
@@ -77,18 +69,35 @@ exports.getPropertiById = async (req, res) => {
 
 
 //
-// ➕ TAMBAH properti baru
+// ➕ TAMBAH properti baru (HANYA untuk senior leader)
 //
 exports.createProperti = [
-    upload.single("image"), // name form dari FE
     async (req, res) => {
         try {
-            const { nama_properti, deskripsi } = req.body;
+            const { nama_properti, deskripsi, lokasi, kontraktor, id_member } = req.body;
 
+            // 💥 Cek apakah member adalah senior leader
+            const member = await Member.findOne({
+                where: {
+                    id_member,
+                    jabatan: "senior leader",
+                },
+            });
+
+            if (!member) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Hanya member dengan jabatan 'senior leader' yang dapat menambahkan properti.",
+                });
+            }
+
+            // Jika member valid → buat properti
             const newProperti = await Properti.create({
                 nama_properti,
                 deskripsi,
-                image: req.file ? req.file.buffer : null, // simpan binary image
+                lokasi,
+                kontraktor,
+                id_member: member.id_member, // pastikan terhubung
             });
 
             res.status(201).json({
@@ -109,14 +118,13 @@ exports.createProperti = [
 
 
 //
-// ✏️ UPDATE properti berdasarkan ID
+// ✏️ UPDATE properti
 //
 exports.updateProperti = [
-    upload.single("image"),
     async (req, res) => {
         try {
             const { id } = req.params;
-            const { nama_properti, deskripsi } = req.body;
+            const { nama_properti, deskripsi, lokasi, kontraktor } = req.body;
 
             const properti = await Properti.findByPk(id);
 
@@ -130,7 +138,8 @@ exports.updateProperti = [
             await properti.update({
                 nama_properti,
                 deskripsi,
-                image: req.file ? req.file.buffer : properti.image, // jika tidak upload image baru, gunakan image lama
+                lokasi,
+                kontraktor,
             });
 
             res.status(200).json({
@@ -151,7 +160,7 @@ exports.updateProperti = [
 
 
 //
-// 🗑️ HAPUS properti berdasarkan ID
+// 🗑️ HAPUS properti
 //
 exports.deleteProperti = async (req, res) => {
     try {
