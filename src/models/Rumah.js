@@ -50,7 +50,7 @@ const Rumah = sequelize.define(
     },
     {
         tableName: "rumah",
-        timestamps: true,
+        timestamps: false,
     }
 );
 
